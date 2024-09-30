@@ -15,6 +15,8 @@
 # -------------------------------------------------------------
 import pyvisa
 import time
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # -------------------------------------------------------------
@@ -59,18 +61,25 @@ def initialisera():
 
 def mata(oscilloskop):
 
+    frequency =  []
+
+    
+
     # Mät frekvensen från oscilloskopets mätfunktion
     try:
-        # set-kommando:
-        oscilloskop.write(':MEASure:FREQuency')
-        # query-kommando:
-        frekvens = oscilloskop.query(':MEASure:FREQuency?')
-        print(f"Frekvens: {frekvens} Hz")
+        oscilloskop.write(':AUToscale')
+        for sec in range(0,30):
+            # set-kommando:
+            oscilloskop.write(':MEASure:FREQuency')
+            # query-kommando:
+            frekvens = oscilloskop.query(':MEASure:FREQuency?')
+            print(f"Frekvens: {frekvens} Hz")
+            frequency.append(float(frekvens))
+            time.sleep(1)
     except Exception as e:
         print(f"Misslyckades med att mäta frekvens: {e}")
-
     # Returnera den uppmätta frekvensen
-    return float(frekvens)
+    return frequency
 
 # -------------------------------------------------------------
 # Block 3: Analysera
@@ -85,6 +94,48 @@ def analysera(frekvens):
         print("Varning: Frekvensen ligger utanför det förväntade intervallet (50-60 Hz).")
     else:
         print(f"Frekvensen ligger inom förväntat intervall: {frekvens} Hz")
+
+def plot_sin(frekvens):
+
+    # Skapa tidsvektor
+    fs = 1000  # Samplingsfrekvens i Hz
+    t = np.linspace(0, 0.2, fs)  # 1 s 
+
+    # Skapa sinusvåg
+    f = frekvens  # Frekvens i Hz
+    sinus = np.sin(2 * np.pi * f * t)
+
+
+    # Rita upp sinusvågen
+    plt.figure(figsize=(10, 6))
+    plt.plot(t, sinus, label='Ren sinus', color='blue')
+    plt.title('Ren sinusvåg')
+    plt.xlabel('Tid [s]')
+    plt.ylabel('Amplitud')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def plot(frequency):
+    plt.figure(figsize=(10, 6))
+    amount_of_values = len(frequency)
+    x_label = range(0,amount_of_values)
+    plt.plot(x_label, frequency, label='Frekvenser', color='blue')
+    plt.title('Frekvenser')
+    plt.xlabel('Tid [s]')
+    plt.ylabel('Amplitud')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def save_to_file(frequency):
+    file = open('Testdata.csv', mode = 'w')
+    data_points = len(frequency)
+    for f in range(0,data_points):
+        file.write(frequency[f])
+        if f < data_points:
+            print(',')
+    file.close()
 
 # -------------------------------------------------------------
 # Huvudprogram
@@ -105,7 +156,10 @@ def main():
         return
 
     # Block 3: Analysera
-    analysera(frekvens)
+    #analysera(frekvens)
+    print(frekvens)
+    save_to_file(frekvens)
+    plot(frekvens)
 
     # Stäng anslutningen till oscilloskopet
     oscilloskop.close()
