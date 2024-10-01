@@ -1,23 +1,8 @@
-# -------------------------------------------------------------
-# Programskelett och kod för att mäta frekvens med oscilloskop.
-# Koden mäter frekvens och kontrolelrar om den ligger inom ett
-# visst intervall. Resultat skrivs till terminal.
-# Yrgo, 2024-09-27
-# Henrik Hallenberg
-# Kod genererad med ChatGPT4o
-#
-# OBS! Kod/kommentarer är på svenska, vilket bör undvikas!
-# -------------------------------------------------------------
-
-
-# -------------------------------------------------------------
-# Importera bibliotek
-# -------------------------------------------------------------
 import pyvisa
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-
+import datetime
 
 # -------------------------------------------------------------
 # Block 1: Initialisera
@@ -68,60 +53,46 @@ def mata(oscilloskop):
     # Mät frekvensen från oscilloskopets mätfunktion
     try:
         oscilloskop.write(':AUToscale')
-        for sec in range(0,30):
-            # set-kommando:
-            oscilloskop.write(':MEASure:FREQuency')
-            # query-kommando:
-            frekvens = oscilloskop.query(':MEASure:FREQuency?')
-            print(f"Frekvens: {frekvens} Hz")
-            frequency.append(float(frekvens))
-            time.sleep(0.1)
+        # set-kommando:
+        oscilloskop.write(':WAVeform:DATA')
+        # query-kommando:
+        frekvens = oscilloskop.query(':WAVeform:DATA?')
+        print(f"Frekvens: {frekvens} Hz")
+        frequency.append(float(frekvens))
     except Exception as e:
         print(f"Misslyckades med att mäta frekvens: {e}")
     # Returnera den uppmätta frekvensen
     return frequency
 
+def read_raw_data(oscilloskop):
+    try:
+        oscilloskop.write(':AUToscale')
+        # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
+        oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
+        oscilloskop.write(":WAV:MODE RAW")    # Hämtar rådata
 
-def plot_sin(frekvens):
+        # Hämtar inställningar för att hämta vågformen
+        oscilloskop.write(":WAV:FORM ASCII")  # Ställ in formatet för vågformsdata till ASCII
+        oscilloskop.write(":WAV:DATA?")       # Begär vågformsdata från oscilloskopet
 
-    # Skapa tidsvektor
-    fs = 1000  # Samplingsfrekvens i Hz
-    t = np.linspace(0, 0.2, fs)  # 1 s 
+        # Hämta den råa vågformsdatan
+        raw_data = oscilloskop.read()
+    
+    except Exception as e:
+        print(f'Failed to read data: {e}')
 
-    # Skapa sinusvåg
-    f = frekvens  # Frekvens i Hz
-    sinus = np.sin(2 * np.pi * f * t)
+    return raw_data
 
+def save_to_file(data):
+    current_time = datetime.datetime.now()
+    current_time = str(current_time)
+    current_time = current_time.replace(' ','_')
+    current_time = current_time.split('.')
+    current_time = current_time[0].replace(':','.')
+    filename = 'test_data/test_' + current_time + '.csv'
 
-    # Rita upp sinusvågen
-    plt.figure(figsize=(10, 6))
-    plt.plot(t, sinus, label='Ren sinus', color='blue')
-    plt.title('Ren sinusvåg')
-    plt.xlabel('Tid [s]')
-    plt.ylabel('Amplitud')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def plot(frequency):
-    plt.figure(figsize=(10, 6))
-    amount_of_values = len(frequency)
-    x_label = range(0,amount_of_values)
-    plt.plot(x_label, frequency, label='Frekvenser', color='blue')
-    plt.title('Frekvenser')
-    plt.xlabel('Tid [s]')
-    plt.ylabel('Amplitud')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def save_to_file(frequency):
-    file = open('Testdata.csv', mode = 'w')
-    data_points = len(frequency)
-    for f in range(0,data_points):
-        file.write(frequency[f])
-        if f < data_points:
-            print(',')
+    file = open(filename, mode = 'w')
+    file.write(data)
     file.close()
 
 # -------------------------------------------------------------
@@ -137,16 +108,13 @@ def main():
 
     # Block 2: Mätning
     try:
-        frekvens = mata(oscilloskop)
+        data = read_raw_data(oscilloskop)
     except Exception as e:
         print(f"Mätning misslyckades: {e}")
         return
 
-    # Block 3: Analysera
-    #analysera(frekvens)
-    print(frekvens)
-    save_to_file(frekvens)
-    plot(frekvens)
+    save_to_file(data)
+
 
     # Stäng anslutningen till oscilloskopet
     oscilloskop.close()
