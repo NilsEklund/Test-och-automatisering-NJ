@@ -89,7 +89,8 @@ def save_to_file(data):
     current_time = current_time.replace(' ','_')
     current_time = current_time.split('.')
     current_time = current_time[0].replace(':','.')
-    filename = 'test_data/test_' + current_time + '.csv'
+    file_path = '/home/nils/test_data/'
+    filename = file_path +'test_' + current_time + '.csv'
 
     file = open(filename, mode = 'w')
     file.write(data)
