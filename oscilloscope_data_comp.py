@@ -94,7 +94,7 @@ def save_to_file(raw_data):
     current_time = current_time.replace(' ','_')
     current_time = current_time.split('.')
     current_time = current_time[0].replace(':','.')
-    file_path = '/home/nils/test_data/'
+    file_path = '/home/nils/Test-och-Automatisering-Data/data/'
     filename = file_path +'test_' + current_time + '.csv'
 
     file = open(filename, mode = 'w')
