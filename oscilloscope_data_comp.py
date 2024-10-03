@@ -46,23 +46,17 @@ def initialisera():
 
 def mata(oscilloskop):
 
-    frequency =  []
-
-    
-
     # Mät frekvensen från oscilloskopets mätfunktion
     try:
         oscilloskop.write(':AUToscale')
         # set-kommando:
         oscilloskop.write(':WAVeform:DATA')
         # query-kommando:
-        frekvens = oscilloskop.query(':WAVeform:DATA?')
-        print(f"Frekvens: {frekvens} Hz")
-        frequency.append(float(frekvens))
+        raw_data = oscilloskop.query(':WAVeform:DATA?')
     except Exception as e:
         print(f"Misslyckades med att mäta frekvens: {e}")
     # Returnera den uppmätta frekvensen
-    return frequency
+    return raw_data
 
 def read_raw_data(oscilloskop):
     try:
@@ -89,6 +83,9 @@ def save_to_file(raw_data):
     data = []
     for data_point in raw_data:
         data.append(float(data_point))
+    data = str(data)
+    data = data.replace('[','')
+    data = data.replace(']','')
 
     current_time = datetime.datetime.now()
     current_time = str(current_time)
@@ -99,7 +96,7 @@ def save_to_file(raw_data):
     filename = file_path +'test_' + current_time + '.csv'
 
     file = open(filename, mode = 'w')
-    file.write(str(data))
+    file.write(data)
     file.close()
 
 # -------------------------------------------------------------
