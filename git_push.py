@@ -1,7 +1,7 @@
 import subprocess
 from gpiozero import LED
 
-led = LED(10)
+led = LED(15)
 
 led.on()
 
