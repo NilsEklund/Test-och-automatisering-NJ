@@ -84,6 +84,7 @@ def read_raw_data(oscilloskop):
     return raw_data
 
 def save_to_file(raw_data):
+    raw_data = raw_data.split(',')
     raw_data.pop(0)
     data = []
     for data_point in raw_data:
