@@ -99,7 +99,7 @@ def save_to_file(raw_data):
     filename = file_path +'test_' + current_time + '.csv'
 
     file = open(filename, mode = 'w')
-    file.write(data)
+    file.write(str(data))
     file.close()
 
 # -------------------------------------------------------------
