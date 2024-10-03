@@ -83,7 +83,12 @@ def read_raw_data(oscilloskop):
 
     return raw_data
 
-def save_to_file(data):
+def save_to_file(raw_data):
+    raw_data.pop(0)
+    data = []
+    for data_point in raw_data:
+        data.append(float(data_point))
+
     current_time = datetime.datetime.now()
     current_time = str(current_time)
     current_time = current_time.replace(' ','_')
