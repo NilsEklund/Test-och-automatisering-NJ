@@ -1,4 +1,5 @@
 import threading
+from time import sleep
 import pwm_test
 import oscilloscope_data_comp
 from gpiozero import LED
@@ -11,6 +12,7 @@ pwm_thread = threading.Thread(target=pwm_test.pwm)
 osc_thread = threading.Thread(target=oscilloscope_data_comp.main)
 
 pwm_thread.start()
+sleep(0.5)
 osc_thread.start()
 
 osc_thread.join()
