@@ -9,12 +9,12 @@ def pwm():
     GPIO.setup(pin, GPIO.OUT)
 
     # PWM setup
-    pwm_frequency = 5000  # PWM frekvens i Hz
+    pwm_frequency = 1000  # PWM frekvens i Hz
     pwm = GPIO.PWM(pin, pwm_frequency)  # Initiera PWM på pinne 13
     pwm.start(0)  # Starta PWM med 0% duty cycle
 
     # Parametrar
-    sin_frequency = 500  # 50 Hz sinusvåg
+    sin_frequency = 50  # 50 Hz sinusvåg
     sampling_rate = pwm_frequency * 20  # Samplingsfrekvens
     duration = 10  # Kör programmet i 15 sekunder
 
