@@ -14,7 +14,7 @@ def pwm():
     pwm.start(0)  # Starta PWM med 0% duty cycle
 
     # Parametrar
-    sin_frequency = 50  # 50 Hz sinusvåg
+    sin_frequency = 300  # 50 Hz sinusvåg
     sampling_rate = pwm_frequency * 20  # Samplingsfrekvens
     duration = 7  # Kör programmet i 15 sekunder
 
