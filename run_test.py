@@ -12,7 +12,7 @@ pwm_thread = threading.Thread(target=pwm.pwm)
 osc_thread = threading.Thread(target=oscilloscope_data_comp.main)
 
 pwm_thread.start()
-sleep(0.5)
+sleep(1)
 osc_thread.start()
 
 osc_thread.join()

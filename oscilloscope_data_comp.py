@@ -1,6 +1,7 @@
 import pyvisa
 import matplotlib.pyplot as plt
 import datetime
+from time import sleep
 
 # -------------------------------------------------------------
 # Block 1: Initialisera
@@ -59,6 +60,7 @@ def mata(oscilloskop):
 def read_raw_data(oscilloskop):
     try:
         oscilloskop.write(':AUToscale')
+        sleep(1)
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
         oscilloskop.write(":WAV:MODE RAW")    # Hämtar rådata

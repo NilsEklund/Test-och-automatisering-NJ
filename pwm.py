@@ -16,7 +16,7 @@ def pwm():
     # Parametrar
     sin_frequency = 50  # 50 Hz sinusvåg
     sampling_rate = pwm_frequency * 20  # Samplingsfrekvens
-    duration = 5  # Kör programmet i 15 sekunder
+    duration = 7  # Kör programmet i 15 sekunder
 
     # Generera sinusvågen
     t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
