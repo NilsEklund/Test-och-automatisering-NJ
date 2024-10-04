@@ -33,3 +33,5 @@ def pwm():
         pwm.stop()  # Stanna PWM
         GPIO.cleanup()  # Rensa GPIO inställningar
 
+if __name__ == "__main__":
+    pwm()
