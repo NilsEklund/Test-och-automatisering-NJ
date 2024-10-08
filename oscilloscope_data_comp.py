@@ -68,10 +68,10 @@ def read_raw_data(oscilloskop):
         print(3)
 
         # Kontrollera om inställningarna är korrekt applicerade
-        vertical_scale = oscilloskop.query('CH1:SCALE?')
+       # vertical_scale = oscilloskop.query('CH1:SCALE?')
         print(4)
         timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
-        print (f'vertical_scale: {vertical_scale}')
+        #print (f'vertical_scale: {vertical_scale}')
         print (f'timebase_scale: {timebase_scale}')
 
         oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
@@ -79,8 +79,8 @@ def read_raw_data(oscilloskop):
         oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
 
         sleep(1)
-
-       # oscilloskop.write('ACQUIRE:STATE ONCE')
+	
+        oscilloskop.write('ACQUIRE:STATE ONCE')
 
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
