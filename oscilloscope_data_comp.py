@@ -61,11 +61,15 @@ def read_raw_data(oscilloskop):
     try:
         #oscilloskop.write(':AUToscale')
         oscilloskop.write('CH1:SCALE 0.5')
+        print(1)
         oscilloskop.write('TIMEBASE:SCALE 5E-3')
+        print(2)
         oscilloskop.write('CH1:OFFSet 1.5')
+        print(3)
 
         # Kontrollera om inställningarna är korrekt applicerade
         vertical_scale = oscilloskop.query('CH1:SCALE?')
+        print(4)
         timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
         print (f'vertical_scale: {vertical_scale}')
         print (f'timebase_scale: {timebase_scale}')
