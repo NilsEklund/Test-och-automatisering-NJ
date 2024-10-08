@@ -18,10 +18,12 @@ def loop():
         soft_pwm.ChangeDutyCycle(dc)
         time.sleep(0.00001)
 
-def loop_2():
-    for i in range(0, 100):
+data_points = 1000
 
-        x = i / 100
+def loop_2():
+    for i in range(0, data_points):
+
+        x = i / data_points
 
         dc = 50 * np.sin(2 * np.pi * x) +50
 
