@@ -80,7 +80,7 @@ def read_raw_data(oscilloskop):
 
         sleep(1)
 
-        oscilloskop.write('ACQUIRE:STATE ONCE')
+       # oscilloskop.write('ACQUIRE:STATE ONCE')
 
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
