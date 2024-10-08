@@ -60,7 +60,24 @@ def mata(oscilloskop):
 def read_raw_data(oscilloskop):
     try:
         #oscilloskop.write(':AUToscale')
+        oscilloskop.write('CH1:SCALE 0.5')
+        oscilloskop.write('TIMEBASE:SCALE 5E-3')
+        oscilloskop.write('CH1:OFFSet 1.5')
+
+        # Kontrollera om inställningarna är korrekt applicerade
+        vertical_scale = oscilloskop.query('CH1:SCALE?')
+        timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
+        print (f'vertical_scale: {vertical_scale}')
+        print (f'timebase_scale: {timebase_scale}')
+
+        oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
+        oscilloskop.write('TRIGGER:EDGE:SOUR CH1')  # Trigga från kanal 1
+        oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
+
         sleep(1)
+
+        oscilloskop.write('ACQUIRE:STATE ONCE')
+
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
         oscilloskop.write(":WAV:MODE RAW")    # Hämtar rådata
