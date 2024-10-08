@@ -70,13 +70,15 @@ def read_raw_data(oscilloskop):
         #print (f'vertical_scale: {vertical_scale}')
         print (f'timebase_scale: {timebase_scale}')
 
+        
+        sleep(1)
+	
+        oscilloskop.write('ACQUIRE:STATE OFF')
+
         oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
         oscilloskop.write('TRIGGER:EDGE:SOUR CH1')  # Trigga från kanal 1
         oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
-
-        sleep(1)
-	
-        oscilloskop.write('ACQUIRE:STATE ONCE')
+        
         oscilloskop.write('ACQUIRE:STATE RUN')  # Starta avläsningen
         while True:
             trigger_status = oscilloskop.query('TRIGGER:STATE?')
