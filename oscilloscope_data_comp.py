@@ -47,7 +47,7 @@ def mata(oscilloskop):
 
     # Mät frekvensen från oscilloskopets mätfunktion
     try:
-        oscilloskop.write(':AUToscale')
+        #oscilloskop.write(':AUToscale')
         # set-kommando:
         oscilloskop.write(':WAVeform:DATA')
         # query-kommando:
