@@ -47,7 +47,7 @@ def mata(oscilloskop):
 
     # Mät frekvensen från oscilloskopets mätfunktion
     try:
-        #oscilloskop.write(':AUToscale')
+        oscilloskop.write(':AUToscale')
         # set-kommando:
         oscilloskop.write(':WAVeform:DATA')
         # query-kommando:
@@ -59,7 +59,7 @@ def mata(oscilloskop):
 
 def read_raw_data(oscilloskop):
     try:
-        oscilloskop.write(':AUToscale')
+        #oscilloskop.write(':AUToscale')
         sleep(1)
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
