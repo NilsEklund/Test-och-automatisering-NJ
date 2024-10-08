@@ -1,6 +1,7 @@
 import threading
 import time
 import temp2
+import numpy as np
 
 
 
@@ -18,3 +19,5 @@ t2.start()
 t2.join()
 temp2.run_print(False)
 t.join()
+x = np.sin 
+np.pi
