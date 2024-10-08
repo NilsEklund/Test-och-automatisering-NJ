@@ -61,15 +61,11 @@ def read_raw_data(oscilloskop):
     try:
         #oscilloskop.write(':AUToscale')
         oscilloskop.write('CH1:SCALE 0.5')
-        print(1)
         oscilloskop.write('TIMEBASE:SCALE 5E-3')
-        print(2)
         oscilloskop.write('CH1:OFFSet 1.5')
-        print(3)
 
         # Kontrollera om inställningarna är korrekt applicerade
-       # vertical_scale = oscilloskop.query('CH1:SCALE?')
-        print(4)
+        #vertical_scale = oscilloskop.query('CH1:SCALE?')
         timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
         #print (f'vertical_scale: {vertical_scale}')
         print (f'timebase_scale: {timebase_scale}')
@@ -81,6 +77,11 @@ def read_raw_data(oscilloskop):
         sleep(1)
 	
         oscilloskop.write('ACQUIRE:STATE ONCE')
+        oscilloskop.write('ACQUIRE:STATE RUN')  # Starta avläsningen
+        while True:
+            trigger_status = oscilloskop.query('TRIGGER:STATE?')
+            if trigger_status.strip() == 'TRIGGER_DONE':
+                break
 
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
