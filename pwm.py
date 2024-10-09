@@ -10,20 +10,20 @@ def stop_pwm(input):
 
 def run_pwm():
     # Setup GPIO
-    GPIO.setmode(GPIO.BCM)  # Use BCM pin numbering
-    pwm_pin = 18            # Set the pin for PWM (GPIO 18 as example)
+    GPIO.setmode(GPIO.BCM)
+    pwm_pin = 18
     GPIO.setup(pwm_pin, GPIO.OUT)
 
     # Set PWM frequency (50 Hz)
-    pwm_frequency = 2500  # You want to create a 50 Hz wave, but high PWM frequency for smoother output
+    pwm_frequency = 2500
     pwm = GPIO.PWM(pwm_pin, pwm_frequency)
-    pwm.start(0)  # Start PWM with 0% duty cycle
+    # Set PWM duty cycle to start at 0%
+    pwm.start(0)
 
     # Parameters
-    wave_frequency = 150  # 50 Hz sine wave
-    steps = 200          # Number of steps per wave period
-    delay = 1.0 / (wave_frequency * steps)  # Time delay per step to match 50 Hz wave
-
+    wave_frequency = 150
+    steps = 200
+    delay = 1.0 / (wave_frequency * steps)
 
     while run:
         for step in range(steps):
@@ -40,3 +40,4 @@ def run_pwm():
 
 if __name__ == '__main__': 
    run_pwm()
+   

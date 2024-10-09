@@ -39,23 +39,24 @@ def initialisera():
 
     return oscilloskop
 
-# -------------------------------------------------------------
-# Block 2: Mätning
-# -------------------------------------------------------------
-
 def read_raw_data(oscilloskop):
     try:
-        #oscilloskop.write(':AUToscale')
+        # Sets vertical scale of channel 1 to 500mV
         oscilloskop.write('CH1:SCALE 0.5')
+        # Sets time scale to 5ms
         oscilloskop.write('TIMEBASE:SCALE 5E-3')
+        # Offcet channel 1 by 1.5 V
         oscilloskop.write('CH1:OFFSet 1.5')
 
-        # Kontrollera om inställningarna är korrekt applicerade
+        # Returns value of the time scale
         timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
 
-        oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
-        oscilloskop.write('TRIGGER:EDGE:SOUR CH1')  # Trigga från kanal 1
-        oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
+        # Sets Trigger level to 2 volt
+        oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')
+        # Sets Trigger to channel 1
+        oscilloskop.write('TRIGGER:EDGE:SOUR CH1')
+        # Sets trigger to rising flank
+        oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')
 
     except Exception as e:
         print(f'Failed to send command: {e}')
@@ -63,20 +64,22 @@ def read_raw_data(oscilloskop):
     sleep(3)
 
     try:
-
+        # Trigger a singel sweap
         oscilloskop.write(':SINGLE')
 
-        # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
-        oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
-        oscilloskop.write(":WAV:MODE RAW")    # Hämtar rådata
+        # Sets chanel 1 as data source
+        oscilloskop.write(":WAV:SOUR CHAN1")
+        # Sets mode to raw to measure the raw data
+        oscilloskop.write(":WAV:MODE RAW")
+        # Sets the format of the data to ASCII
+        oscilloskop.write(":WAV:FORM ASCII")
+        # Sends requiest to resive the raw data
+        oscilloskop.write(":WAV:DATA?")
 
-        # Hämtar inställningar för att hämta vågformen
-        oscilloskop.write(":WAV:FORM ASCII")  # Ställ in formatet för vågformsdata till ASCII
-        oscilloskop.write(":WAV:DATA?")       # Begär vågformsdata från oscilloskopet
-
-        # Hämta den råa vågformsdatan
+        # Resive the raw data
         raw_data = oscilloskop.read()
 
+        # Sets mode to continuous mode
         oscilloskop.write(':RUN')
     
     except Exception as e:
