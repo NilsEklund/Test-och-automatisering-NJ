@@ -43,20 +43,6 @@ def initialisera():
 # Block 2: Mätning
 # -------------------------------------------------------------
 
-def mata(oscilloskop):
-
-    # Mät frekvensen från oscilloskopets mätfunktion
-    try:
-        oscilloskop.write(':AUToscale')
-        # set-kommando:
-        oscilloskop.write(':WAVeform:DATA')
-        # query-kommando:
-        raw_data = oscilloskop.query(':WAVeform:DATA?')
-    except Exception as e:
-        print(f"Misslyckades med att mäta frekvens: {e}")
-    # Returnera den uppmätta frekvensen
-    return raw_data
-
 def read_raw_data(oscilloskop):
     try:
         #oscilloskop.write(':AUToscale')
@@ -139,7 +125,7 @@ def main():
         print(f"Mätning misslyckades: {e}")
         return
 
-    save_to_file(data)
+    save_to_file(data[0], data[1])
 
 
     # Stäng anslutningen till oscilloskopet
