@@ -102,7 +102,7 @@ def save_to_file(raw_data, time_scale):
     raw_data = raw_data.split(',')
     raw_data.pop(0)
     data = []
-    data.append(float(time_scale))
+    data.append(time_scale)
     for data_point in raw_data:
         data.append(float(data_point))
     data = str(data)
