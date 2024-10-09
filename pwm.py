@@ -1,37 +1,42 @@
 import RPi.GPIO as GPIO
-import numpy as np
 import time
+import math
 
-def pwm():
-    # GPIO setup
-    GPIO.setmode(GPIO.BCM)  # Använd BCM-nummer
-    pin = 13  # GPIO 13 motsvarar fysiska pinne 33
-    GPIO.setup(pin, GPIO.OUT)
+run = True
 
-    # PWM setup
-    pwm_frequency = 1000  # PWM frekvens i Hz
-    pwm = GPIO.PWM(pin, pwm_frequency)  # Initiera PWM på pinne 13
-    pwm.start(0)  # Starta PWM med 0% duty cycle
+def stop_pwm(input):
+    global run
+    run = input
 
-    # Parametrar
-    sin_frequency = 50  # 50 Hz sinusvåg
-    sampling_rate = pwm_frequency * 20  # Samplingsfrekvens
-    duration = 10  # Kör programmet i 15 sekunder
+def run_pwm():
+    # Setup GPIO
+    GPIO.setmode(GPIO.BCM)  # Use BCM pin numbering
+    pwm_pin = 18            # Set the pin for PWM (GPIO 18 as example)
+    GPIO.setup(pwm_pin, GPIO.OUT)
 
-    # Generera sinusvågen
-    t = np.linspace(0, duration, int(sampling_rate * duration), endpoint=False)
-    sin_wave = 0.5 * (1 + np.sin(2 * np.pi * sin_frequency * t))  # Normalisera mellan 0 och 1
+    # Set PWM frequency (50 Hz)
+    pwm_frequency = 2500  # You want to create a 50 Hz wave, but high PWM frequency for smoother output
+    pwm = GPIO.PWM(pwm_pin, pwm_frequency)
+    pwm.start(0)  # Start PWM with 0% duty cycle
 
-    # Skicka ut PWM signalen
-    try:
-        for value in sin_wave:
-            duty_cycle = value * 100  # Konvertera till % (mellan 0 och 100)
+    # Parameters
+    wave_frequency = 150  # 50 Hz sine wave
+    steps = 200          # Number of steps per wave period
+    delay = 1.0 / (wave_frequency * steps)  # Time delay per step to match 50 Hz wave
+
+
+    while run:
+        for step in range(steps):
+            # Calculate the angle for the sine wave (0 to 2pi)
+            angle = 2 * math.pi * step / steps
+            # Calculate the sine value and convert it to a duty cycle (0 to 100%)
+            duty_cycle = (math.sin(angle) + 1) * 50  # Sine wave range is -1 to 1, convert to 0 to 100%
             pwm.ChangeDutyCycle(duty_cycle)
-            time.sleep(1 / sampling_rate)  # Vänta tills nästa sampling
+            time.sleep(delay)  # Wait for the next step
 
-    finally:
-        pwm.stop()  # Stanna PWM
-        GPIO.cleanup()  # Rensa GPIO inställningar
 
-if __name__ == "__main__":
-    pwm()
+    pwm.stop()
+    GPIO.cleanup()
+
+if __name__ == '__main__': 
+   run_pwm()
