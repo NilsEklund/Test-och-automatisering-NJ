@@ -18,7 +18,7 @@ def loop():
         soft_pwm.ChangeDutyCycle(dc)
         time.sleep(0.000001)
 
-data_points = 2000
+data_points = 2600
 
 def loop_2():
     for i in range(0, data_points):
