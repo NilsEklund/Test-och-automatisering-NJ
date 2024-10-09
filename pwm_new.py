@@ -25,7 +25,7 @@ def loop_2():
 
         x = i / data_points
 
-        dc = 45 * np.sin(2 * np.pi * x) +50
+        dc = 45 * np.sin(2 * np.pi * x) + 45
 
         soft_pwm.ChangeDutyCycle(dc)
        # time.sleep(0.00001)
