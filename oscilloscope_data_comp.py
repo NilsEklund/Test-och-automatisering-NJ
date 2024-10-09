@@ -65,17 +65,18 @@ def read_raw_data(oscilloskop):
         oscilloskop.write('CH1:OFFSet 1.5')
 
         # Kontrollera om inställningarna är korrekt applicerade
-        #vertical_scale = oscilloskop.query('CH1:SCALE?')
         timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
-        #print (f'vertical_scale: {vertical_scale}')
-        print (f'timebase_scale: {timebase_scale}')
-
-        
-        sleep(1)
 
         oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
         oscilloskop.write('TRIGGER:EDGE:SOUR CH1')  # Trigga från kanal 1
         oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
+
+    except Exception as e:
+        print(f'Failed to send command: {e}')
+
+    sleep(3)
+
+    try:
 
         oscilloskop.write(':SINGLE')
 
@@ -95,12 +96,13 @@ def read_raw_data(oscilloskop):
     except Exception as e:
         print(f'Failed to read data: {e}')
 
-    return raw_data
+    return raw_data, timebase_scale
 
-def save_to_file(raw_data):
+def save_to_file(raw_data, time_scale):
     raw_data = raw_data.split(',')
     raw_data.pop(0)
     data = []
+    data.append(float(time_scale))
     for data_point in raw_data:
         data.append(float(data_point))
     data = str(data)
