@@ -72,18 +72,12 @@ def read_raw_data(oscilloskop):
 
         
         sleep(1)
-	
-        oscilloskop.write('ACQUIRE:STATE OFF')
 
         oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')  # Ställ in triggnivå på 2V
         oscilloskop.write('TRIGGER:EDGE:SOUR CH1')  # Trigga från kanal 1
         oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')  # Ställ in triggnivå för stigande flank
-        
-        oscilloskop.write('ACQUIRE:STATE RUN')  # Starta avläsningen
-        while True:
-            trigger_status = oscilloskop.query('TRIGGER:STATE?')
-            if trigger_status.strip() == 'TRIGGER_DONE':
-                break
+
+        oscilloskop.write(':SINGLE')
 
         # Ställ in oscilloskopet för att mäta kanal 1 och ställ in vågformen som sinus
         oscilloskop.write(":WAV:SOUR CHAN1")  # Ställer in kanal 1 som datakälla
