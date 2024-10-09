@@ -89,6 +89,8 @@ def read_raw_data(oscilloskop):
 
         # Hämta den råa vågformsdatan
         raw_data = oscilloskop.read()
+
+        oscilloskop.write(':RUN')
     
     except Exception as e:
         print(f'Failed to read data: {e}')
