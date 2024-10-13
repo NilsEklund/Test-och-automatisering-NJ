@@ -1,62 +1,53 @@
+# Initiate communication with a the oscilloscope.
+# Sends configuration commands to the oscilloscope.
+# Reads the raw data from channel 1 of the oscilloscope.
+# Saves the data in a new file named with current date and time
+
 import pyvisa
 import matplotlib.pyplot as plt
 import datetime
 from time import sleep
 
-# -------------------------------------------------------------
-# Block 1: Initialisera
-# -------------------------------------------------------------
-
-def initialisera():
-    # Initialiserar anslutningen till oscilloskopet och returnerar instrumentobjektet
+def initiate():
+    # Initiating a connection to the oscilloscope and returns the instrument object.
     rm = pyvisa.ResourceManager()
 
-    # Hämta alla tillgängliga resurser för att identifiera oscilloskopet anslutet via USB
-    resurser = rm.list_resources()
-    print("Tillgängliga resurser:", resurser)
+    resources = rm.list_resources()
+    print("Available resources:", resources)
 
-    # Kontrollera att resurser finns
-    if not resurser:
-        raise ValueError("Inga resurser hittades. Kontrollera anslutningen.")
+    if not resources:
+        raise ValueError("No resources found. Check the connection.")
 
-    # Anslut till första resurser i listan, eller specificera rätt adress om flera finns
-    # OBS! Instrumentadressen kan förstås hårdkodas med sin adress
-    instrument_adress = resurser[0]
-    oscilloskop = rm.open_resource(instrument_adress)
+    instrument_address = resources[0]
+    oscilloscope = rm.open_resource(instrument_address)
 
-    # Kontrollera att vi är anslutna till rätt instrument genom att fråga om ID
-    idn = oscilloskop.query('*IDN?')
-    print(f"Ansluten till: {idn}")
+    idn = oscilloscope.query('*IDN?')
+    print(f"Connected to: {idn}")
 
-    # Ställ in timeout och avslutning för kommunikation
-    oscilloskop.timeout = 5000
-    oscilloskop.write_termination = '\n'
-    oscilloskop.read_termination = '\n'
+    oscilloscope.timeout = 5000
+    oscilloscope.write_termination = '\n'
+    oscilloscope.read_termination = '\n'
 
-    # Ofta behövs mer kod för att ställa in instrumentet inför mätning.
-    # Exempel på ytterligare inställningar för oscilloskop är trig, kanal, tidsbas, ...
-    # VIssa av dessa inställningar kan göras här, men man kan också behöva justera under mätningen.
+    return oscilloscope
 
-    return oscilloskop
-
-def read_raw_data(oscilloskop):
+def read_raw_data(oscilloscope):
     try:
         # Sets vertical scale of channel 1 to 500mV
-        oscilloskop.write('CH1:SCALE 0.5')
+        oscilloscope.write('CH1:SCALE 0.5')
         # Sets time scale to 5ms
-        oscilloskop.write('TIMEBASE:SCALE 5E-3')
-        # Offcet channel 1 by 1.5 V
-        oscilloskop.write('CH1:OFFSet 1.5')
+        oscilloscope.write('TIMEBASE:SCALE 5E-3')
+        # Offset channel 1 by 1.5 V
+        oscilloscope.write('CH1:OFFSet 1.5')
 
         # Returns value of the time scale
-        timebase_scale = oscilloskop.query('TIMEBASE:SCALE?')
+        timebase_scale = oscilloscope.query('TIMEBASE:SCALE?')
 
         # Sets Trigger level to 2 volt
-        oscilloskop.write('TRIGGER:EDGE:LEVELO 2.0')
+        oscilloscope.write('TRIGGER:EDGE:LEVELO 2.0')
         # Sets Trigger to channel 1
-        oscilloskop.write('TRIGGER:EDGE:SOUR CH1')
+        oscilloscope.write('TRIGGER:EDGE:SOUR CH1')
         # Sets trigger to rising flank
-        oscilloskop.write('TRIGGER:EDGE:SLOPe POSitive')
+        oscilloscope.write('TRIGGER:EDGE:SLOPe POSitive')
 
     except Exception as e:
         print(f'Failed to send command: {e}')
@@ -64,23 +55,23 @@ def read_raw_data(oscilloskop):
     sleep(3)
 
     try:
-        # Trigger a singel sweap
-        oscilloskop.write(':SINGLE')
+        # Trigger a single sweep
+        oscilloscope.write(':SINGLE')
 
         # Sets chanel 1 as data source
-        oscilloskop.write(":WAV:SOUR CHAN1")
+        oscilloscope.write(":WAV:SOUR CHAN1")
         # Sets mode to raw to measure the raw data
-        oscilloskop.write(":WAV:MODE RAW")
+        oscilloscope.write(":WAV:MODE RAW")
         # Sets the format of the data to ASCII
-        oscilloskop.write(":WAV:FORM ASCII")
-        # Sends requiest to resive the raw data
-        oscilloskop.write(":WAV:DATA?")
+        oscilloscope.write(":WAV:FORM ASCII")
+        # Sends request to send the raw data
+        oscilloscope.write(":WAV:DATA?")
 
-        # Resive the raw data
-        raw_data = oscilloskop.read()
+        # Saves the raw data
+        raw_data = oscilloscope.read()
 
         # Sets mode to continuous mode
-        oscilloskop.write(':RUN')
+        oscilloscope.write(':RUN')
     
     except Exception as e:
         print(f'Failed to read data: {e}')
@@ -110,29 +101,22 @@ def save_to_file(raw_data, time_scale):
     file.write(data)
     file.close()
 
-# -------------------------------------------------------------
-# Huvudprogram
-# -------------------------------------------------------------
 def main():
-    # Block 1: Initialisera
     try:
-        oscilloskop = initialisera()
+        oscilloscope = initiate()
     except Exception as e:
-        print(f"Initialisering misslyckades: {e}")
+        print(f"Initiation failed: {e}")
         return
 
-    # Block 2: Mätning
     try:
-        data = read_raw_data(oscilloskop)
+        data = read_raw_data(oscilloscope)
     except Exception as e:
-        print(f"Mätning misslyckades: {e}")
+        print(f"Measuring : {e}")
         return
 
     save_to_file(data[0], data[1])
 
-
-    # Stäng anslutningen till oscilloskopet
-    oscilloskop.close()
+    oscilloscope.close()
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,12 @@
+# Runs the git pull command for a specific git repo
+
 import subprocess
 from gpiozero import LED
 
-led = LED(15)
+blue_led = LED(15)
 
-led.on()
+blue_led.on()
 
 subprocess.call(['git','-C','/home/nils/Test-och-automatisering-NJ','pull'])
 
-led.off()
+blue_led.off()

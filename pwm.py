@@ -1,3 +1,6 @@
+# Creates a PWM signal to recreate a sin wave using a LP filter.
+# Stops PWM signal when stop_pwm is called
+
 import RPi.GPIO as GPIO
 import time
 import math
